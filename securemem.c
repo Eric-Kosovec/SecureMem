@@ -22,7 +22,7 @@ static long get_page_size(void);
 securemem_t secure_malloc(size_t size) {
 	securemem_t ptr = NULL;
 	
-	if (size > 0 && ((ptr = malloc(size)) != NULL)) {
+	if (size > 0 && ((ptr = (securemem_t)malloc(size)) != NULL)) {
 		// Lock pages containing the malloc'd memory so they 
 		// do not get swapped to disk due to virtual memory.
 		if (lock_mem(ptr, size)) {
