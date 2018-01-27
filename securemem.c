@@ -21,7 +21,7 @@ static long get_page_size(void);
 
 securemem_t secure_malloc(size_t size) {
 	securemem_t ptr = NULL;
-	
+
 	if (size > 0 && ((ptr = (securemem_t)malloc(size)) != NULL)) {
 		// Lock pages containing the malloc'd memory so they 
 		// do not get swapped to disk due to virtual memory.
@@ -42,7 +42,7 @@ int secure_free(securemem_t ptr, size_t size) {
 		
 		// Securely wipe the memory.
 		secure_memset(ptr, 0, size);
-		
+
 		if (unlock_mem(ptr, size)) {
 			result = -1;
 		}
@@ -90,11 +90,17 @@ securemem_t secure_realloc(securemem_t ptr, size_t new_size, size_t old_size) {
 static int lock_mem(const securemem_t ptr, size_t size) {
 	int result = -1;
 	
-	long i;
+	unsigned long i;
 	long page_size = get_page_size();
+	unsigned long page_offset = 0; 
+
+	if (page_size < 0) {
+		return -1;
+	}
 	
 	if (ptr && size >= 0) {
-		result = mlock(ptr, size);
+		page_offset = (unsigned long)ptr % (unsigned long)page_size;
+		result = mlock(ptr - page_offset, size + page_offset);
 		
 		// Force Linux to reserve a physical page, 
 		// as pages may be copy-on-write.
@@ -108,9 +114,17 @@ static int lock_mem(const securemem_t ptr, size_t size) {
 
 static int unlock_mem(const securemem_t ptr, size_t size) {
 	int result = -1;
+
+	long page_size = get_page_size();
+	unsigned long page_offset = 0; 
+
+	if (page_size < 0) {
+		return -1;
+	}
 	
 	if (ptr && size >= 0) {
-		result = munlock(ptr, size);
+		page_offset = (unsigned long)ptr % (unsigned long)page_size;
+		result = munlock(ptr - page_offset, size + page_offset);
 	}
 	
 	return result;
