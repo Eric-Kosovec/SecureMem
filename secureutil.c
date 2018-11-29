@@ -31,10 +31,6 @@ int secure_memcmp(const void * s1, const void * s2, size_t n) {
 	int result = 0;
 	int i = 0;
 	
-	if (t1 == t2) {
-		return result;
-	}
-	
 	if (t1 == NULL || t2 == NULL || n < 0) {
 		return 1;
 	}
