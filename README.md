@@ -1,5 +1,5 @@
 # SecureMem
-Provides means of getting memory-locked pages and securely zeroing this memory for use with quickly-used sensitive data.
+Provides means of getting memory-locked pages and securely zeroing this memory for quickly-used sensitive data.
 
 While this will take care of locking the data in memory and wiping when freed, additional 
 precautions must be taken. The core size should be set to 0, so if a coredump occurs, memory won't 
