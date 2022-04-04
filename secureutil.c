@@ -22,22 +22,3 @@ void * secure_memset(void * s, int c, size_t n) {
 	
 	return s;
 }
-
-// Constant time comparison to avoid timing attacks.
-int secure_memcmp(const void * s1, const void * s2, size_t n) {
-	const char * t1 = (char *)s1;
-	const char * t2 = (char *)s2;
-	
-	int result = 0;
-	int i = 0;
-	
-	if (t1 == NULL || t2 == NULL || n < 0) {
-		return 1;
-	}
-	
-	for (i = 0; i < n; ++i) {		
-		result |= t1[i] ^ t2[i];
-	}
-	
-	return result;
-}
